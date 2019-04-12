@@ -63,6 +63,8 @@ class InputError(Error):
 # m = MyEntity(1)
 #m.__class__.__mro__ => (__main__.myEntity, __main__.Entity, object)
 
+# TO DO : interface -> use pyglet
+
 # TO DO : neural networks
 # genetics algorithms with 4 parameters to tune ::
 #   - number of layers (network_depth)
