@@ -55,13 +55,30 @@ class InputError(Error):
         
 """
 
-#TO DO : add check type of object ->
+# TO DO : add check type of object ->
 # instance.__class__.__mro__ => liste des classes de la plus specifique à la plus générale (object)
 #si class MyEntity(Entity):
 #       pass
 #
 # m = MyEntity(1)
 #m.__class__.__mro__ => (__main__.myEntity, __main__.Entity, object)
+
+# TO DO : neural networks
+# genetics algorithms with 4 parameters to tune ::
+#   - number of layers (network_depth)
+#   - number of neurons per layer (network_width)
+#   - dense layer activation function
+#   - network optimizer
+#
+#   => mixDNA on prend la valeur de chaque paramètres au hasard (random.choice[]) entre les deux parents
+
+# TO DO : Continuous Evoutionary System
+#
+# les entités peuvent choisir l'action de se reproduire 
+# - fitness => maxlife (plus il vit longtemps mieux c'est :: max fitness)
+# - chance die mechanism => select 
+# - breed => action to reproduce
+
 
 class Fitness:
     def __init__(self):
@@ -152,8 +169,15 @@ class Entity:
     def reproduction_setPartner(self, entity):
         self.partener = entity
         
+    def checkIfReproductionIsPossible(self, entity):
+        #to complete with test of sex parameters for exemple
+        return True
+    
     def reproduction_2_individuals(self, entity):
-        return Entity(entity.getSpecie())
+        if self.checkIfReproductionIsPossible(entity):
+            return Entity(entity.getSpecie())
+        else:
+            return None
     
     def reproduce(self, entity=None):
         newEntity = Entity(self.specie)
