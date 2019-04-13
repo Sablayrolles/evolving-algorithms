@@ -57,6 +57,8 @@ class InputError(Error):
     raise Nomerror(expression, message)
 """
 
+# TO DO linagora : conda install -c conda-forge pyglet
+
 # TO DO : interface -> use pyglet
 
 # TO DO : neural networks
@@ -75,10 +77,11 @@ class InputError(Error):
 # - chance die mechanism => select 
 # - breed => action to reproduce
 
-def getTopLevelParentClassAsterObject(var):
+"""
+def getTopLevelParentClassAfterObject(var):
     # recuperer le type d'un object sa classe mère meme si il y a des hiérarchies de classes
     return str(var.__class__.__mro__[-2]).split(".")[1][:-2]
-
+    
 class NotADictionnary(Exception):
     def __init__(self, expression, message):
         self.expression = expression
@@ -94,10 +97,20 @@ class NotAnEnvironnement(Exception):
         self.expression = expression
         self.message = message
 
-class NotAPpulation(Exception):
+class NotAPopulation(Exception):
     def __init__(self, expression, message):
         self.expression = expression
         self.message = message
+        
+class NotAFitness(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message 
+        
+class NotASpecie(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message       
 
 class Fitness:
     def __init__(self):
@@ -108,10 +121,12 @@ class Fitness:
     
     def compare_fitness(self, entity1, entity2):
         pass
-    
+
 class Specie:
     nbCreated = 0
     def __init__(self, fitness, name=""):
+        if getTopLevelParentClassAfterObject(fitness) != "Fitness":
+            raise NotAFitness("", "fitness need to be a Fitness")
         self.nbCreated += 1
         
         self.id = self.nbCreated
@@ -122,9 +137,14 @@ class Specie:
         return self.id
     
     def equals(self, specie):
+        if getTopLevelParentClassAfterObject(specie) != "Specie":
+            raise NotAFitness("", "specie need to be a Specie")
+            
         return self.id == specie.getId()
     
     def compatibiliy(self, specie):
+        if getTopLevelParentClassAfterObject(specie) != "Specie":
+            raise NotAFitness("", "specie need to be a Specie")
         pass
     
     def mixDNA(DNA1, DNA2):
@@ -132,7 +152,7 @@ class Specie:
         if str(type(DNA1)) != "dict" or str(type(DNA2)) != "dict":
             raise NotADictionnary("", "DNA need to be a dictionnary")
         pass
-    
+
 class Entity:
     nbCreated = 0
     def __init__(self, specie, reproduction_type="clone", reproduction_max_child=0): 
@@ -143,6 +163,9 @@ class Entity:
         # binary : the individual can reproduce with any entity only once
         
         #reproduction_max_child = 0 : no limit
+        if getTopLevelParentClassAfterObject(specie) != "Specie":
+            raise NotASpecie("", "specie need to be a Specie")
+            
         self.nbCreated += 1
         
         self.id = self.nbCreated
@@ -158,6 +181,9 @@ class Entity:
         return self.id
     
     def equals(self, entity):
+        if getTopLevelParentClassAfterObject(entity) != "Entity" :
+            raise NotAnEntity("", "entity need to be an entity")
+            
         return self.id == entity.getId()
     
     def getSpecie(self):
@@ -190,20 +216,20 @@ class Entity:
         return self.specie.entity_fitness(self)
     
     def reproduction_setPartner(self, entity):
-        if getTopLevelParentClassAsterObject(entity) != "Entity" :
+        if getTopLevelParentClassAfterObject(entity) != "Entity" :
             raise NotAnEntity("", "entity need to be an entity")
             
         self.partener = entity
         
     def checkIfReproductionIsPossible(self, entity):
-        if getTopLevelParentClassAsterObject(entity) != "Entity" :
+        if getTopLevelParentClassAfterObject(entity) != "Entity" :
             raise NotAnEntity("", "entity need to be an entity")
             
         #to complete with test of sex parameters for exemple
         return True
     
     def reproduction_2_individuals(self, entity):
-        if getTopLevelParentClassAsterObject(entity) != "Entity" :
+        if getTopLevelParentClassAfterObject(entity) != "Entity" :
             raise NotAnEntity("", "entity need to be an entity")
             
         if self.checkIfReproductionIsPossible(entity):
@@ -263,12 +289,17 @@ class Environnement:
     
     def tick(self):
         pass
-    
+  
 class Population:
     nbCreated = 0
     num_gen_act = 0
     
     def __init__(self, size, percent_selection, chance_mutation, species, species_repartition, name="", nb_thread=1):
+        
+        for s in species:
+            if getTopLevelParentClassAfterObject(s) != "Specie":
+                raise NotASpecie("", "species need to be a Specie list")
+                
         self.nbCreated += 1
         
         self.id = self.nbCreated
@@ -321,30 +352,28 @@ class Population:
         pass
     
     def runGeneration(self, environnement=Environnement()):
-        if getTopLevelParentClassAsterObject(environnement) != "Environnement" :
+        if getTopLevelParentClassAfterObject(environnement) != "Environnement" :
             raise NotAnEnvironnement("", "environnement need to be an Environnement")
             
         pass
     
 class Statistique:
     def __init__(self, population):
-        if getTopLevelParentClassAsterObject(population) != "Population" :
+        if getTopLevelParentClassAfterObject(population) != "Population" :
             raise NotAPopulation("", "population need to be an Population")
             
         self.targetPopulation = population
         
     def getInformations(self):
-        
-        return [self.targetPopulation.getEntitiesFitness(),  self.targetPopulation.getEntitiesDictionnaries()]
-    
+        return [self.targetPopulation.getEntitiesFitness(),  self.targetPopulation.getEntitiesDictionnaries()]    
     
 class World:
     def __init__(self, environnement, populations_list, name = ""):
-        if getTopLevelParentClassAsterObject(environnement) != "Environnement" :
+        if getTopLevelParentClassAfterObject(environnement) != "Environnement" :
             raise NotAnEnvironnement("", "environnement need to be an Environnement")
             
         for p in populations_list:
-            if getTopLevelParentClassAsterObject(p) != "Population" :
+            if getTopLevelParentClassAfterObject(p) != "Population" :
                 raise NotAPopulation("", "populations_list need to be an Population list")
         
         self.name = name
@@ -367,7 +396,7 @@ class World:
             p.selectGeneration()
             p.breedGeneration()
             p.mutateGeneration()
-        
+ """       
         
 if __name__ == "__main__":
     pass
