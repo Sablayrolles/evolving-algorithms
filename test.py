@@ -53,15 +53,9 @@ class InputError(Error):
         self.expression = expression
         self.message = message
         
+        
+    raise Nomerror(expression, message)
 """
-
-# TO DO : add check type of object ->
-# instance.__class__.__mro__ => liste des classes de la plus specifique à la plus générale (object)
-#si class MyEntity(Entity):
-#       pass
-#
-# m = MyEntity(1)
-#m.__class__.__mro__ => (__main__.myEntity, __main__.Entity, object)
 
 # TO DO : interface -> use pyglet
 
@@ -81,6 +75,29 @@ class InputError(Error):
 # - chance die mechanism => select 
 # - breed => action to reproduce
 
+def getTopLevelParentClassAsterObject(var):
+    # recuperer le type d'un object sa classe mère meme si il y a des hiérarchies de classes
+    return str(var.__class__.__mro__[-2]).split(".")[1][:-2]
+
+class NotADictionnary(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+        
+class NotAnEntity(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+        
+class NotAnEnvironnement(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+
+class NotAPpulation(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
 
 class Fitness:
     def __init__(self):
@@ -112,6 +129,8 @@ class Specie:
     
     def mixDNA(DNA1, DNA2):
         #mix the 2 DNA and return a new DNA
+        if str(type(DNA1)) != "dict" or str(type(DNA2)) != "dict":
+            raise NotADictionnary("", "DNA need to be a dictionnary")
         pass
     
 class Entity:
@@ -156,6 +175,8 @@ class Entity:
         return DNA
     
     def injectDNA(self, DNA, keepSameId = False):
+        if str(type(DNA)) != "dict":
+            raise NotAnEntity("", "DNA need to be a dictionnary")
         if not keepSameId:
             id_save = self.id
         self.__dict__ = DNA
@@ -169,13 +190,22 @@ class Entity:
         return self.specie.entity_fitness(self)
     
     def reproduction_setPartner(self, entity):
+        if getTopLevelParentClassAsterObject(entity) != "Entity" :
+            raise NotAnEntity("", "entity need to be an entity")
+            
         self.partener = entity
         
     def checkIfReproductionIsPossible(self, entity):
+        if getTopLevelParentClassAsterObject(entity) != "Entity" :
+            raise NotAnEntity("", "entity need to be an entity")
+            
         #to complete with test of sex parameters for exemple
         return True
     
     def reproduction_2_individuals(self, entity):
+        if getTopLevelParentClassAsterObject(entity) != "Entity" :
+            raise NotAnEntity("", "entity need to be an entity")
+            
         if self.checkIfReproductionIsPossible(entity):
             return Entity(entity.getSpecie())
         else:
@@ -291,18 +321,32 @@ class Population:
         pass
     
     def runGeneration(self, environnement=Environnement()):
+        if getTopLevelParentClassAsterObject(environnement) != "Environnement" :
+            raise NotAnEnvironnement("", "environnement need to be an Environnement")
+            
         pass
     
 class Statistique:
     def __init__(self, population):
+        if getTopLevelParentClassAsterObject(population) != "Population" :
+            raise NotAPopulation("", "population need to be an Population")
+            
         self.targetPopulation = population
         
-    def getInformations(self, population):
+    def getInformations(self):
+        
         return [self.targetPopulation.getEntitiesFitness(),  self.targetPopulation.getEntitiesDictionnaries()]
     
     
 class World:
     def __init__(self, environnement, populations_list, name = ""):
+        if getTopLevelParentClassAsterObject(environnement) != "Environnement" :
+            raise NotAnEnvironnement("", "environnement need to be an Environnement")
+            
+        for p in populations_list:
+            if getTopLevelParentClassAsterObject(p) != "Population" :
+                raise NotAPopulation("", "populations_list need to be an Population list")
+        
         self.name = name
         self.environnement = environnement
         self.populations = populations_list
