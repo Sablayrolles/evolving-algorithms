@@ -5,20 +5,20 @@ from . import exceptions
 
 class Entity:
     nbCreated = 0
-    def __init__(self, specie, reproduction_type="clone", reproduction_max_child=0): 
+    def __init__(self, specie, reproduction_type="clone", reproduction_max_child=-1): 
         # reproduction_type = ["clone", "replicated", "couple", "binary"]
         # clone: the individual make a copy of itself younger
         # replicated : the indicidual make a copy of itself
         # couple : the individual can reproduce only with a single entity only once (sameAsOldGeneration if not died)
         # binary : the individual can reproduce with any entity only once
         
-        #reproduction_max_child = 0 : no limit
+        #reproduction_max_child = -1 : no limit
         if str(constantes.getTopLevelParentClassAfterObject(specie)) != "Specie":
             raise exceptions.NotASpecie("", "specie need to be a Specie")
             
-        self.nbCreated += 1
+        self.__class__.nbCreated += 1
         
-        self.id = self.nbCreated
+        self.id = self.__class__.nbCreated
         self.specie = specie
         self.reproduction_type = reproduction_type
         self.reproduction_max_child = reproduction_max_child
@@ -40,7 +40,7 @@ class Entity:
         return self.specie
     
     def getDNA(self):
-        return self.__dict__
+        return self.__dict__.copy()
     
     def clone(self, reinitialiseInternalClock = True):
         DNA = self.getDNA()
@@ -50,15 +50,17 @@ class Entity:
             
         return DNA
     
+    def _initialize(self):
+        pass
+    
     def injectDNA(self, DNA, keepSameId = False):
-        if str(type(DNA)) != "dict":
+        if str(type(DNA)) != "<class 'dict'>":
             raise exceptions.NotADictionnary("", "DNA need to be a dictionnary")
             
-        if not keepSameId:
-            id_save = self.id
         self.__dict__ = DNA
         if not keepSameId:
-            self.id = id_save
+            self.__class__.nbCreated += 1
+            self.id = self.__class__.nbCreated
     
     def randomParameters(specie):
         return Entity(specie)
@@ -82,25 +84,32 @@ class Entity:
     def reproduction_2_individuals(self, entity):
         if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
             raise exceptions.NotAnEntity("", "entity need to be an entity")
-            
-        if self.checkIfReproductionIsPossible(entity):
+        
+        #to complete with ::
+        """if self.checkIfReproductionIsPossible(entity):
             return Entity(entity.getSpecie())
         else:
             return None
+        """
+        pass
     
-    def reproduce(self, entity=None):
-        newEntity = Entity(self.specie)
+    def reproduce(self, entity=None, keepSameId=False):
+        newEntity = self.__class__.randomParameters(self.getSpecie())
         
+        #on check le nombre d'enfant
+        if self.reproduction_max_child != -1 and self.reproductionChildNumberOnTick > self.reproduction_max_child:
+            raise exceptions.CantReproduceDueToMaxChild("", "Too much child was create i can't reproduce"+self.reproduction_max_child+ "(set to -1 for no limit)")
         self.reproductionChildNumberOnTick += 1
         
-        if self.reproduction_type == "clone" and (self.reproduction_max_child == 0 or self.reproductionChildNumberOnTick < self.reproduction_max_child):
-            #on check le nombre d'enfant
-            newEntity.injectDNA(self.clone())
+        if self.reproduction_type == "clone":
+            newEntity.injectDNA(self.clone(), keepSameId = keepSameId)
+            return newEntity
         else:
-            if self.reproduction_type == "replicated" and (self.reproduction_max_child < -1 or self.reproductionChildNumberOnTick < self.reproduction_max_child):
-                newEntity.injectDNA(self.clone(reinitialiseInternalClock = False))
+            if self.reproduction_type == "replicated":
+                newEntity.injectDNA(self.clone(reinitialiseInternalClock = False), keepSameId = keepSameId)
+                return newEntity
             else:
-                if self.reproduction_type == "couple" and (self.reproduction_max_child < -1 or self.reproductionChildNumberOnTick < self.reproduction_max_child):
+                if self.reproduction_type == "couple":
                     
                     #si le couple n'est pas créé on le créé:
                     if self.partener == None:
@@ -111,12 +120,12 @@ class Entity:
                     if entity.equals(self.partener) and entity != None:
                         return self.reproduction_2_individuals(entity)
                 else:
-                    if self.reproduction_type == "binary" and (self.reproduction_max_child < -1 or self.reproductionChildNumberOnTick < self.reproduction_max_child):
+                    if self.reproduction_type == "binary":
                         if entity != None:
                             return self.reproduction_2_individuals(entity)
                     else:
-                        raise exceptions.UnknownReproductionType("", "can't reproduce because we don't known type".self.reproduction_type)
-
+                        raise exceptions.UnknownReproductionType("", "can't reproduce because we don't known type : "+self.reproduction_type)
+        return None
     
     def isTimeToDie(self):
         return False

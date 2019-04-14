@@ -56,7 +56,7 @@ s = Blocs(f, "Blocs")
 #entity class 3)
 class BlocEntity(evolving.entity.Entity):
     def __init__(self, specie, speed):
-        super().__init__(specie, reproduction_max_child=1)
+        super().__init__(specie, reproduction_type="replicated", reproduction_max_child=1)
         
         if str(type(speed)) != "<class 'int'>" and str(type(speed)) != "<class 'float'>":
             print(str(type(speed)))
@@ -69,6 +69,16 @@ class BlocEntity(evolving.entity.Entity):
         
     def randomParameters(specie):
         return BlocEntity(specie, random.randint(-10,10))
+    
+    def _initialize(self):
+        self.posX = 0
+
+    def reproduce(self, entity=None, keepSameId=False):
+        e = super().reproduce(entity=entity, keepSameId=keepSameId)
+        if self.reproduction_type != "replicated":
+            e._initialize()
+        
+        return e
         
     def getPosX(self):
         return self.posX
@@ -88,7 +98,11 @@ class BlocEntity(evolving.entity.Entity):
         while not self.isTimeToDie():
             self._lifeCycle()
             
-e = BlocEntity(s, 0.2)       
+e = BlocEntity(s, 0.2)
+e2 = BlocEntity(s, -0.5)
+
+e.live()
+e_1 = e.reproduce(keepSameId=True)  
         
 """
 ---------------------
