@@ -100,9 +100,15 @@ class BlocEntity(evolving.entity.Entity):
             
 e = BlocEntity(s, 0.2)
 e2 = BlocEntity(s, -0.5)
+e3 = BlocEntity(s, 0.3)
 
+"""
+clone & replicated ==> ok
 e.live()
-e_1 = e.reproduce(keepSameId=True)  
+e_1 = e.reproduce(keepSameId=True)
+"""
+
+# TO DO : developped and test for couple and multiple with specie.compatibiliy and specie.mixDNA
         
 """
 ---------------------
