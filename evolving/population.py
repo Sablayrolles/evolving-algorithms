@@ -34,7 +34,7 @@ class Population:
                 raise exceptions.NotAPercent("", "percent in species_caracteristiques need to be an int or a float")
             
             s_percent += float(percent) 
-        if s_percent != 100:
+        if s_percent != 1:
             raise exceptions.PercentRepartitionIncorrect("", "sum of percent repartition need to be equals to 100")
             
         self.nbCreated += 1
@@ -51,6 +51,9 @@ class Population:
         self.species_caracteristiques = species_caracteristiques
         
         self.nbThread = nb_thread
+        
+        self.order = []
+        self.selectGen = []
 
     def getIdentification(self):
         if self.name == "":
@@ -75,7 +78,7 @@ class Population:
                 specie = e["specie"]
                 percent = e["percent"]
                 
-                self.actualGen.extend([classe.randomParameters(specie) for _ in range(int(float(percent) / 100.0 * self.size ))])
+                self.actualGen.extend([classe.randomParameters(specie) for _ in range(int(float(percent) * self.size ))])
         else:
             self.actualGen = self.nextGen
             self.nextGen = []

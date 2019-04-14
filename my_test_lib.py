@@ -158,9 +158,16 @@ class BlockPopulation(evolving.population.Population):
         neworder = {k:v for k,v in sorted(order.items(), key=lambda x: -x[1])}
         
         self.order = neworder
+    
+    def selectGeneration(self):
+        nbEnt = int(self.percent_selection*self.size)
+    
+        for i in range(nbEnt):
+            self.selectGen.append(list(self.order.keys())[i])
         
     
-p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0,species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 100}])
+p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
 p.createGeneration()
 p.runGeneration(env)
 p.orderGeneration()
+p.selectGeneration()
