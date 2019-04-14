@@ -11,6 +11,7 @@ Created on Sun Apr 14 00:31:19 2019
     V 3) create a set of Entities class for each specie herited from Entity class
     4) create a population herited from Population class for your set of entities class and species
 """
+import random
 
 import evolving
 
@@ -66,6 +67,9 @@ class BlocEntity(evolving.entity.Entity):
         self.posX = 0
         self.maxTime = 100
         
+    def randomParameters(specie):
+        return BlocEntity(specie, random.randint(-10,10))
+        
     def getPosX(self):
         return self.posX
     
@@ -89,3 +93,7 @@ e = BlocEntity(s, 0.2)
 """
 ---------------------
 """
+
+#population class 4)
+
+p = evolving.population.Population(size=10, percent_selection=0.7, chance_mutation=0,species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 100}])
