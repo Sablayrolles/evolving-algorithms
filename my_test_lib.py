@@ -26,7 +26,7 @@ class FitnessBlock(evolving.fitness.Fitness):
     def entity_fitness(self, entity):
         super().entity_fitness(entity)
         
-        return entity.getPosX
+        return entity.getPosX()
     
     def compare_fitness(self, entity1, entity2):
         super().compare_fitness(entity1, entity2)
@@ -148,7 +148,19 @@ class BlockPopulation(evolving.population.Population):
     def runGeneration(self, environnement):
         for e in self.actualGen:
             e.live()
+            
+    def orderGeneration(self):
+        order = {}
+        
+        for e in self.actualGen:
+            order[e] = e.fitness()
+
+        neworder = {k:v for k,v in sorted(order.items(), key=lambda x: -x[1])}
+        
+        self.order = neworder
+        
     
 p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0,species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 100}])
 p.createGeneration()
 p.runGeneration(env)
+p.orderGeneration()
