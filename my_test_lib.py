@@ -90,6 +90,9 @@ class BlocEntity(evolving.entity.Entity):
         return newDNA
     
     
+    def mutate(self, percent_mutation):
+        self.speed = float(self.speed) + float(random.choice([-1,1]))*percent_mutation*float(self.speed)
+    
     def reproduction_2_individuals(self, entity):
         super().reproduction_2_individuals(entity)
         
@@ -184,7 +187,11 @@ class BlockPopulation(evolving.population.Population):
         
         for p in mono_parent_list:
             self.nextGen.append(p.reproduce())
-        
+            
+    def mutateGeneration(self):
+        for e in self.nextGen:
+            if random.random() < self.chance_mutation:
+                e.mutate(self.percent_variation_mutation)
     
 p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0.3, percent_variation_mutation=0.2, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
 p.createGeneration()
@@ -192,3 +199,4 @@ p.runGeneration(env)
 p.orderGeneration()
 p.selectGeneration()
 p.breedGeneration()
+p.mutateGeneration()
