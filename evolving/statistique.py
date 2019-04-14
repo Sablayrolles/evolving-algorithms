@@ -5,8 +5,8 @@ from . import exceptions
 
 class Statistique:
     def __init__(self, population):
-        if getTopLevelParentClassAfterObject(population) != "Population" :
-            raise NotAPopulation("", "population need to be an Population")
+        if str(constantes.getTopLevelParentClassAfterObject(population)) != "Population" :
+            raise exceptions.NotAPopulation("", "population need to be an Population")
             
         self.targetPopulation = population
         

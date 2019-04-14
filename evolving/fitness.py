@@ -8,6 +8,8 @@ class Fitness:
         pass
     
     def entity_fitness(self, entity):
+        if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
+            raise exceptions.NotAnEntity("", "entity need to be an entity")
         pass
     
     def compare_fitness(self, entity1, entity2):

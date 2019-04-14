@@ -2,7 +2,6 @@
 
 from . import constantes
 from . import exceptions
-from . import specie
 
 class Entity:
     nbCreated = 0
@@ -14,8 +13,8 @@ class Entity:
         # binary : the individual can reproduce with any entity only once
         
         #reproduction_max_child = 0 : no limit
-        if getTopLevelParentClassAfterObject(specie) != "Specie":
-            raise NotASpecie("", "specie need to be a Specie")
+        if str(constantes.getTopLevelParentClassAfterObject(specie)) != "Specie":
+            raise exceptions.NotASpecie("", "specie need to be a Specie")
             
         self.nbCreated += 1
         
@@ -32,8 +31,8 @@ class Entity:
         return self.id
     
     def equals(self, entity):
-        if getTopLevelParentClassAfterObject(entity) != "Entity" :
-            raise NotAnEntity("", "entity need to be an entity")
+        if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
+            raise exceptions.NotAnEntity("", "entity need to be an entity")
             
         return self.id == entity.getId()
     
@@ -53,7 +52,8 @@ class Entity:
     
     def injectDNA(self, DNA, keepSameId = False):
         if str(type(DNA)) != "dict":
-            raise NotAnEntity("", "DNA need to be a dictionnary")
+            raise exceptions.NotADictionnary("", "DNA need to be a dictionnary")
+            
         if not keepSameId:
             id_save = self.id
         self.__dict__ = DNA
@@ -67,21 +67,21 @@ class Entity:
         return self.specie.entity_fitness(self)
     
     def reproduction_setPartner(self, entity):
-        if getTopLevelParentClassAfterObject(entity) != "Entity" :
-            raise NotAnEntity("", "entity need to be an entity")
+        if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
+            raise exceptions.NotAnEntity("", "entity need to be an entity")
             
         self.partener = entity
         
     def checkIfReproductionIsPossible(self, entity):
-        if getTopLevelParentClassAfterObject(entity) != "Entity" :
-            raise NotAnEntity("", "entity need to be an entity")
+        if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
+            raise exceptions.NotAnEntity("", "entity need to be an entity")
             
         #to complete with test of sex parameters for exemple
         return True
     
     def reproduction_2_individuals(self, entity):
-        if getTopLevelParentClassAfterObject(entity) != "Entity" :
-            raise NotAnEntity("", "entity need to be an entity")
+        if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
+            raise exceptions.NotAnEntity("", "entity need to be an entity")
             
         if self.checkIfReproductionIsPossible(entity):
             return Entity(entity.getSpecie())

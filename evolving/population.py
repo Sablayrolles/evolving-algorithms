@@ -9,9 +9,15 @@ class Population:
     
     def __init__(self, size, percent_selection, chance_mutation, species, species_repartition, name="", nb_thread=1):
         
-        for s in species:
-            if getTopLevelParentClassAfterObject(s) != "Specie":
-                raise NotASpecie("", "species need to be a Specie list")
+        if str(type(species)) != "dict":
+            raise exceptions.NotADictionnary("", "species need to be a dictionnary of entity: specie")
+            
+        for e,s in species.items():
+            if str(constantes.getTopLevelParentClassAfterObject(s)) != "Entity":
+                raise exceptions.NotASpecie("", "e object in species need to be a Entity")
+                
+            if str(constantes.getTopLevelParentClassAfterObject(s)) != "Specie":
+                raise exceptions.NotASpecie("", "s object in species need to be a Specie")
                 
         self.nbCreated += 1
         
@@ -42,12 +48,12 @@ class Population:
     def getEntitiesDictionnaries(self):
         return [e.getDNA() for e in self.actualGen]
         
-    def createGeneration(self):
+    def createGeneration(self, entityClass):
         self.num_gen_act += 1
         
         # first generation we need to create a set of entities --> need to use repartition of species
         if self.num_gen_act == 1 :
-            self.actualGen = [Entity.randomParameters() for _ in range(self.size)]
+            self.actualGen = [entityClass.randomParameters() for _ in range(self.size)]
         else:
             self.actualGen = self.nextGen
             self.nextGen = []
@@ -64,8 +70,8 @@ class Population:
     def mutateGeneration(self):
         pass
     
-    def runGeneration(self, environnement=Environnement()):
-        if getTopLevelParentClassAfterObject(environnement) != "Environnement" :
-            raise NotAnEnvironnement("", "environnement need to be an Environnement")
+    def runGeneration(self, environnement):
+        if str(constantes.getTopLevelParentClassAfterObject(environnement)) != "Environnement" :
+            raise exceptions.NotAnEnvironnement("", "environnement need to be an Environnement")
             
         pass
