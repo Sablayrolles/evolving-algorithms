@@ -9,7 +9,8 @@ Created on Sun Apr 14 00:31:19 2019
     V 1) create for each specie you want a class of own fitness herited from Fitness class
     V 2) create a set of species herited from Specie class
     V 3) create a set of Entities class for each specie herited from Entity class
-    4) create a population herited from Population class for your set of entities class and species
+    V 4) Créer les environnements
+    5) create a population herited from Population class for your set of entities class and species
 """
 import random
 
@@ -134,10 +135,20 @@ e_1 = e.reproduce(keepSameId=True)
 ---------------------
 """
 
-#population class 4)
+#environnement 4)
+env = evolving.environnement.Environnement()
+
+"""
+---------------------
+"""
+
+#population class 5)
 
 class BlockPopulation(evolving.population.Population):
-    pass
+    def runGeneration(self, environnement):
+        for e in self.actualGen:
+            e.live()
     
 p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0,species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 100}])
 p.createGeneration()
+p.runGeneration(env)
