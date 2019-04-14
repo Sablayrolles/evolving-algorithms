@@ -9,8 +9,11 @@ Created on Sun Apr 14 00:31:19 2019
     V 1) create for each specie you want a class of own fitness herited from Fitness class
     V 2) create a set of species herited from Specie class
     V 3) create a set of Entities class for each specie herited from Entity class
-    V 4) Créer les environnements
-    5) create a population herited from Population class for your set of entities class and species
+    V 4) craete environnements
+    V 5) create a population herited from Population class for your set of entities class and species
+    6) create a statistique class for the analysis of a population
+    7) create a world class to run the test
+    8) create a main to run the application 
 """
 import random
 import numpy
@@ -200,3 +203,21 @@ p.orderGeneration()
 p.selectGeneration()
 p.breedGeneration()
 p.mutateGeneration()
+
+"""
+---------------------
+"""
+
+#statistique class 6)
+
+"""
+---------------------
+"""
+
+#world class 7)
+
+"""
+---------------------
+"""
+
+#main 8)
