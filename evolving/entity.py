@@ -25,7 +25,7 @@ class Entity:
         self.partener = None
         
         self.reproductionChildNumberOnTick = 0
-        self.interclock = 0
+        self.internclock = 0
         
     def getId(self):
         return self.id
@@ -46,7 +46,7 @@ class Entity:
         DNA = self.getDNA()
         
         if reinitialiseInternalClock:
-            DNA["interclock"] = 0
+            DNA["internclock"] = 0
             
         return DNA
     
@@ -115,11 +115,11 @@ class Entity:
                         if entity != None:
                             return self.reproduction_2_individuals(entity)
                     else:
-                        pass
-                        #raise Unknown reproduction type
+                        raise exceptions.UnknownReproductionType("", "can't reproduce because we don't known type".self.reproduction_type)
+
     
     def isTimeToDie(self):
-        pass
+        return False
     
     def die(self):
         #si on meurt on indique a notre partenaire que l'on est mort
@@ -128,8 +128,9 @@ class Entity:
             
     
     def _lifeCycle(self):
-        self.interclock += 1
+        self.internclock += 1
         self.reproductionChildNumberOnTick = 0
     
     def live(self):
-        pass
+        while not self.isTimeToDie():
+            self._lifeCycle()
