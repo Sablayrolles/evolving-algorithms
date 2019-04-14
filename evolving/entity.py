@@ -43,8 +43,8 @@ class Entity:
         return self.__dict__.copy()
     
     def mixDNA(self, DNA1, DNA2):
-        if str(type(DNA1)) != "dict" or str(type(DNA2)) != "dict":
-            raise exceptions.NotADictionnary("", "DNA need to be a dictionnary")
+        if str(type(DNA1)) != "<class 'dict'>" or str(type(DNA2)) != "<class 'dict'>":
+            raise exceptions.NotADictionnary("", "DNAs need to be a dictionnary DNA1:"+str(type(DNA1))+", DNA2:"+str(type(DNA2)))
         pass
     
     def mutate(self, percent_mutation):
@@ -86,7 +86,7 @@ class Entity:
         if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
             raise exceptions.NotAnEntity("", "entity need to be an entity")
             
-        return self.getSpecie().equals(entity.getSpecie)
+        return self.getSpecie().equals(entity.getSpecie())
         
     def checkIfReproductionIsPossible(self, entity):
         if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
@@ -130,7 +130,7 @@ class Entity:
             else:
                 if self.reproduction_type == "couple":
                     if entity == None:
-                        raise ReproductionTwoIndividualNeedOtherEntity("", "entity need to be another member")
+                        raise exceptions.ReproductionTwoIndividualNeedOtherEntity("", "entity need to be another member")
                             
                     #si le couple n'est pas créé on le créé:
                     if self.partener == None:
@@ -147,10 +147,12 @@ class Entity:
                             self.reproductionChildNumberOnTick += 1
                             
                             return self.getSpecie().mixDNAandCreatewithOthersSpecies(entity.getSpecie(), self.getDNA(), entity.getDNA())
+                    else:
+                        raise exceptions.NotMyPartner("", "this is not my partner i can't reproduce with")
                 else:
                     if self.reproduction_type == "binary":
                         if entity == None:
-                            raise ReproductionTwoIndividualNeedOtherEntity("", "entity need to be another member")
+                            raise exceptions.ReproductionTwoIndividualNeedOtherEntity("", "entity need to be another member")
                         
                         if self.isSameSpecie(entity):
                             self.reproductionChildNumberOnTick += 1

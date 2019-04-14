@@ -22,7 +22,7 @@ class Specie:
     
     def equals(self, specie):
         if str(constantes.getTopLevelParentClassAfterObject(specie)) != "Specie":
-            raise exceptions.NotAFitness("", "specie need to be a Specie")
+            raise exceptions.NotASpecie("", "specie need to be a Specie")
             
         return self.id == specie.getId()
     

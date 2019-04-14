@@ -56,7 +56,7 @@ s = Blocs(f, "Blocs")
 #entity class 3)
 class BlocEntity(evolving.entity.Entity):
     def __init__(self, specie, speed):
-        super().__init__(specie, reproduction_type="replicated", reproduction_max_child=1)
+        super().__init__(specie, reproduction_type="clone", reproduction_max_child=1)
         
         if str(type(speed)) != "<class 'int'>" and str(type(speed)) != "<class 'float'>":
             print(str(type(speed)))
@@ -72,7 +72,25 @@ class BlocEntity(evolving.entity.Entity):
     
     def _initialize(self):
         self.posX = 0
+        
+    def mixDNA(self, DNA1, DNA2):
+        super().mixDNA(DNA1, DNA2)
+        
+        newDNA = DNA1.copy()
+        newDNA["speed"] = (DNA1["speed"] + DNA2["speed"]) / 2.
+        
+        return newDNA
 
+    def reproduction_2_individuals(self, entity):
+        super().reproduction_2_individuals(entity)
+        
+        newEntity = self.__class__.randomParameters(self.getSpecie())
+        
+        newEntity.injectDNA(self.mixDNA(self.getDNA(), entity.getDNA()), keepSameId=False)
+        newEntity._initialize()
+        
+        return newEntity
+            
     def reproduce(self, entity=None, keepSameId=False):
         e = super().reproduce(entity=entity, keepSameId=keepSameId)
         if self.reproduction_type != "replicated":
@@ -103,12 +121,14 @@ e2 = BlocEntity(s, -0.5)
 e3 = BlocEntity(s, 0.3)
 
 """
-clone & replicated ==> ok
+#for couple and multiple => ok
+e_1 = e.reproduce(e2)
+e_2 = e.reproduce(e3)
+
+# for clone & replicated ==> ok
 e.live()
 e_1 = e.reproduce(keepSameId=True)
 """
-
-# TO DO : developped and test for couple and multiple with specie.compatibiliy and specie.mixDNA
         
 """
 ---------------------
