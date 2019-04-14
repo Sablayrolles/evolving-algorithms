@@ -3,6 +3,8 @@
 from . import constantes
 from . import exceptions
 
+import random
+
 class Specie:
     nbCreated = 0
     def __init__(self, fitness, name=""):
@@ -26,11 +28,20 @@ class Specie:
     
     def compatibiliy(self, specie):
         if str(constantes.getTopLevelParentClassAfterObject(specie)) != "Specie":
-            raise exceptions.NotAFitness("", "specie need to be a Specie")
+            raise exceptions.NotASpecie("", "specie need to be a Specie")
         pass
+        # return number between 0 and 1 if 0 not compatible and if 1 totally compatible
+        
+        return random
     
-    def mixDNA(DNA1, DNA2):
-        #mix the 2 DNA and return a new DNA
+    def mixDNAandCreatewithOthersSpecies(other_specie, DNA_of_member, DNA_of_other_specie):
+        #mix the 2 DNA and return a new individual
         if str(type(DNA1)) != "dict" or str(type(DNA2)) != "dict":
             raise exceptions.NotADictionnary("", "DNA need to be a dictionnary")
+        
+        if self.compatibility(other_specie) == 0:
+            raise exceptions.NotCompatible("", "specie "+self.getId()+" and specie "+other_specie.getId()+ " are totally incompatible") 
+        else:
+            if random.random() > self.compatibility(other_specie):
+                raise execeptions.UnviableReproduction("", "specie "+self.getId()+" and specie "+other_specie.getId()+ " reproduction fails please retry")
         pass

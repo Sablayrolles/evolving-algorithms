@@ -60,5 +60,17 @@ class UnknownReproductionType(Exception):
 class CantReproduceDueToMaxChild(Exception):
     def __init__(self, expression, message):
         self.expression = expression
-        self.message = message        
+        self.message = message    
+        
+class NotCompatible(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message    
+        
+class UnviableReproduction(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message    
+        
+        NotCompatible
         

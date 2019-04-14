@@ -42,6 +42,14 @@ class Entity:
     def getDNA(self):
         return self.__dict__.copy()
     
+    def mixDNA(self, DNA1, DNA2):
+        if str(type(DNA1)) != "dict" or str(type(DNA2)) != "dict":
+            raise exceptions.NotADictionnary("", "DNA need to be a dictionnary")
+        pass
+    
+    def mutate(self, percent_mutation):
+        pass
+    
     def clone(self, reinitialiseInternalClock = True):
         DNA = self.getDNA()
         
@@ -74,6 +82,12 @@ class Entity:
             
         self.partener = entity
         
+    def isSameSpecie(self, entity):
+        if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
+            raise exceptions.NotAnEntity("", "entity need to be an entity")
+            
+        return self.getSpecie().equals(entity.getSpecie)
+        
     def checkIfReproductionIsPossible(self, entity):
         if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :
             raise exceptions.NotAnEntity("", "entity need to be an entity")
@@ -86,43 +100,66 @@ class Entity:
             raise exceptions.NotAnEntity("", "entity need to be an entity")
         
         #to complete with ::
-        """if self.checkIfReproductionIsPossible(entity):
+        """
+        use: MixDNA
+        if self.checkIfReproductionIsPossible(entity):
             return Entity(entity.getSpecie())
         else:
             return None
         """
         pass
     
-    def reproduce(self, entity=None, keepSameId=False):
-        newEntity = self.__class__.randomParameters(self.getSpecie())
-        
+    def reproduce(self, entity=None, keepSameId=False): 
         #on check le nombre d'enfant
         if self.reproduction_max_child != -1 and self.reproductionChildNumberOnTick > self.reproduction_max_child:
             raise exceptions.CantReproduceDueToMaxChild("", "Too much child was create i can't reproduce"+self.reproduction_max_child+ "(set to -1 for no limit)")
-        self.reproductionChildNumberOnTick += 1
         
         if self.reproduction_type == "clone":
+            newEntity = self.__class__.randomParameters(self.getSpecie())
             newEntity.injectDNA(self.clone(), keepSameId = keepSameId)
+            self.reproductionChildNumberOnTick += 1
+            
             return newEntity
         else:
+            newEntity = self.__class__.randomParameters(self.getSpecie())
             if self.reproduction_type == "replicated":
                 newEntity.injectDNA(self.clone(reinitialiseInternalClock = False), keepSameId = keepSameId)
+                self.reproductionChildNumberOnTick += 1
+                
                 return newEntity
             else:
                 if self.reproduction_type == "couple":
-                    
+                    if entity == None:
+                        raise ReproductionTwoIndividualNeedOtherEntity("", "entity need to be another member")
+                            
                     #si le couple n'est pas créé on le créé:
                     if self.partener == None:
                         self.partener = entity
                         #et on créé la réplique chez le partener
                         entity.reproduction_setPartner(self)
                     
-                    if entity.equals(self.partener) and entity != None:
-                        return self.reproduction_2_individuals(entity)
+                    if entity.equals(self.partener):
+                        if self.isSameSpecie(entity):
+                            self.reproductionChildNumberOnTick += 1
+                            
+                            return self.reproduction_2_individuals(entity)
+                        else:
+                            self.reproductionChildNumberOnTick += 1
+                            
+                            return self.getSpecie().mixDNAandCreatewithOthersSpecies(entity.getSpecie(), self.getDNA(), entity.getDNA())
                 else:
                     if self.reproduction_type == "binary":
-                        if entity != None:
+                        if entity == None:
+                            raise ReproductionTwoIndividualNeedOtherEntity("", "entity need to be another member")
+                        
+                        if self.isSameSpecie(entity):
+                            self.reproductionChildNumberOnTick += 1
+                            
                             return self.reproduction_2_individuals(entity)
+                        else:
+                            self.reproductionChildNumberOnTick += 1
+                            
+                            return self.getSpecie().mixDNAandCreatewithOthersSpecies(entity.getSpecie(), self.getDNA(), entity.getDNA())
                     else:
                         raise exceptions.UnknownReproductionType("", "can't reproduce because we don't known type : "+self.reproduction_type)
         return None
