@@ -112,7 +112,7 @@ class Entity:
     def reproduce(self, entity=None, keepSameId=False): 
         #on check le nombre d'enfant
         if self.reproduction_max_child != -1 and self.reproductionChildNumberOnTick > self.reproduction_max_child:
-            raise exceptions.CantReproduceDueToMaxChild("", "Too much child was create i can't reproduce"+self.reproduction_max_child+ "(set to -1 for no limit)")
+            raise exceptions.CantReproduceDueToMaxChild("", "Too much child was create i can't reproduce"+str(self.reproduction_max_child)+ "(set to -1 for no limit)")
         
         if self.reproduction_type == "clone":
             newEntity = self.__class__.randomParameters(self.getSpecie())

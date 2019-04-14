@@ -7,7 +7,7 @@ class Population:
     nbCreated = 0
     num_gen_act = 0
     
-    def __init__(self, size, percent_selection, chance_mutation, species_caracteristiques, nb_thread=1):
+    def __init__(self, size, percent_selection, chance_mutation, percent_variation_mutation, species_caracteristiques, nb_thread=1):
         
         if str(type(species_caracteristiques)) != "<class 'list'>":
             print(str(type(species_caracteristiques)))
@@ -48,6 +48,7 @@ class Population:
         self.size = size
         self.percent_selection = percent_selection
         self.chance_mutation = chance_mutation
+        self.percent_variation_mutation = percent_variation_mutation
         self.species_caracteristiques = species_caracteristiques
         
         self.nbThread = nb_thread

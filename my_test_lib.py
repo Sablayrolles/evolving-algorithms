@@ -13,6 +13,7 @@ Created on Sun Apr 14 00:31:19 2019
     5) create a population herited from Population class for your set of entities class and species
 """
 import random
+import numpy
 
 import evolving
 
@@ -57,7 +58,7 @@ s = Blocs(f, "Blocs")
 #entity class 3)
 class BlocEntity(evolving.entity.Entity):
     def __init__(self, specie, speed):
-        super().__init__(specie, reproduction_type="clone", reproduction_max_child=1)
+        super().__init__(specie, reproduction_type="clone", reproduction_max_child=-1)
         
         if str(type(speed)) != "<class 'int'>" and str(type(speed)) != "<class 'float'>":
             print(str(type(speed)))
@@ -68,6 +69,12 @@ class BlocEntity(evolving.entity.Entity):
         self.posX = 0
         self.maxTime = 100
         
+    def __str__(self):
+        return "BlocEntity(#"+str(self.id)+", posX="+str(self.posX)+", speed="+str(self.speed)+", internclock="+str(self.internclock)+")"
+    
+    def __repr__(self):
+        return self.__str__()
+    
     def randomParameters(specie):
         return BlocEntity(specie, random.randint(-10,10))
     
@@ -81,7 +88,8 @@ class BlocEntity(evolving.entity.Entity):
         newDNA["speed"] = (DNA1["speed"] + DNA2["speed"]) / 2.
         
         return newDNA
-
+    
+    
     def reproduction_2_individuals(self, entity):
         super().reproduction_2_individuals(entity)
         
@@ -164,10 +172,23 @@ class BlockPopulation(evolving.population.Population):
     
         for i in range(nbEnt):
             self.selectGen.append(list(self.order.keys())[i])
+            
+    def breedGeneration(self):
+        self.nextGen = []
+        
+        probability_of_select = [1.0/float(len(self.selectGen)) for _ in range(len(self.selectGen))]
+
+        
+        #self.size : nbItems to pick if we want couple : self.size*self.size
+        mono_parent_list = numpy.random.choice(self.selectGen, self.size, p=probability_of_select)
+        
+        for p in mono_parent_list:
+            self.nextGen.append(p.reproduce())
         
     
-p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
+p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0.3, percent_variation_mutation=0.2, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
 p.createGeneration()
 p.runGeneration(env)
 p.orderGeneration()
 p.selectGeneration()
+p.breedGeneration()
