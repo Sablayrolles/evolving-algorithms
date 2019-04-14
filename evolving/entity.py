@@ -74,7 +74,7 @@ class Entity:
         return Entity(specie)
     
     def fitness(self):
-        return self.specie.entity_fitness(self)
+        return self.specie.getEntityFitness(self)
     
     def reproduction_setPartner(self, entity):
         if str(constantes.getTopLevelParentClassAfterObject(entity)) != "Entity" :

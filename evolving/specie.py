@@ -16,6 +16,9 @@ class Specie:
         self.id = self.nbCreated
         self.name = name
         self.fitness = fitness
+        
+    def getEntityFitness(self, entity):
+        return self.fitness.entity_fitness(entity)
     
     def getId(self):
         return self.id

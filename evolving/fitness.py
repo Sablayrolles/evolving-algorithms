@@ -13,9 +13,6 @@ class Fitness:
             raise exceptions.NotAnEntity("", "entity need to be an entity")
         pass
     
-    def compare_fitness(self, entity1, entity2):
-        if str(constantes.getTopLevelParentClassAfterObject(entity1)) != "Entity" :
-            raise exceptions.NotAnEntity("", "entity1 need to be an entity")
-        if str(constantes.getTopLevelParentClassAfterObject(entity2)) != "Entity" :
-            raise exceptions.NotAnEntity("", "entity2 need to be an entity")
+    def compare_fitness(self, fitness1, fitness2):
+        #return -1 if 1<2, 0 if 1=2, 1 else
         pass

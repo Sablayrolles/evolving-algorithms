@@ -45,7 +45,7 @@ class Population:
         self.actualGen = []
         self.num_gen_act = 0
         
-        self.size = []
+        self.size = size
         self.percent_selection = percent_selection
         self.chance_mutation = chance_mutation
         self.species_caracteristiques = species_caracteristiques
@@ -64,12 +64,18 @@ class Population:
     def getEntitiesDictionnaries(self):
         return [e.getDNA() for e in self.actualGen]
         
-    def createGeneration(self, entityClass):
+    def createGeneration(self):
         self.num_gen_act += 1
         
         # first generation we need to create a set of entities --> need to use repartition of species
         if self.num_gen_act == 1 :
-            self.actualGen = [entityClass.randomParameters() for _ in range(self.size)]
+            self.actualGen = []
+            for e in self.species_caracteristiques: 
+                classe = e["class"]
+                specie = e["specie"]
+                percent = e["percent"]
+                
+                self.actualGen.extend([classe.randomParameters(specie) for _ in range(int(float(percent) / 100.0 * self.size ))])
         else:
             self.actualGen = self.nextGen
             self.nextGen = []

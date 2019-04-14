@@ -136,4 +136,8 @@ e_1 = e.reproduce(keepSameId=True)
 
 #population class 4)
 
-p = evolving.population.Population(size=10, percent_selection=0.7, chance_mutation=0,species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 100}])
+class BlockPopulation(evolving.population.Population):
+    pass
+    
+p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0,species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 100}])
+p.createGeneration()
