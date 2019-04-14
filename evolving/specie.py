@@ -34,14 +34,14 @@ class Specie:
         
         return random
     
-    def mixDNAandCreatewithOthersSpecies(other_specie, DNA_of_member, DNA_of_other_specie):
+    def mixDNAandCreatewithOthersSpecies(self, other_specie, DNA_of_member, DNA_of_other_specie):
         #mix the 2 DNA and return a new individual
-        if str(type(DNA1)) != "dict" or str(type(DNA2)) != "dict":
+        if str(type(DNA_of_member)) != "dict" or str(type(DNA_of_other_specie)) != "dict":
             raise exceptions.NotADictionnary("", "DNA need to be a dictionnary")
         
         if self.compatibility(other_specie) == 0:
             raise exceptions.NotCompatible("", "specie "+self.getId()+" and specie "+other_specie.getId()+ " are totally incompatible") 
         else:
             if random.random() > self.compatibility(other_specie):
-                raise execeptions.UnviableReproduction("", "specie "+self.getId()+" and specie "+other_specie.getId()+ " reproduction fails please retry")
+                raise exceptions.UnviableReproduction("", "specie "+self.getId()+" and specie "+other_specie.getId()+ " reproduction fails please retry")
         pass
