@@ -70,12 +70,7 @@ class NotCompatible(Exception):
 class UnviableReproduction(Exception):
     def __init__(self, expression, message):
         self.expression = expression
-        self.message = message    
-
-class NotCompatible(Exception):
-    def __init__(self, expression, message):
-        self.expression = expression
-        self.message = message
+        self.message = message   
         
 class NotMyPartner(Exception):
     def __init__(self, expression, message):
