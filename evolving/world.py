@@ -25,7 +25,7 @@ class World:
         self.name = name
         self.environnement = environnement
         self.populations = populations_list
-        self.statistiques = {}
+        self.statistiques = statistiquesPopulationDict
     
     def tick(self):
         self.environnement.tick()
@@ -42,3 +42,6 @@ class World:
             p.selectGeneration()
             p.breedGeneration()
             p.mutateGeneration()
+            
+        for s in self.statistiques:
+            s.fetchInformationsGeneration()

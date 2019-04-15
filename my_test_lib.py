@@ -209,13 +209,17 @@ p.mutateGeneration()
 """
 
 #statistique class 6)
+class BlockStatistiques(evolving.statistique.Statistique):
+    pass
+
+stat = BlockStatistiques(p)
+stat.fetchInformationsGeneration()
 
 """
 ---------------------
 """
 
 #world class 7)
-
 """
 ---------------------
 """

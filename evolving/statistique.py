@@ -10,5 +10,10 @@ class Statistique:
             
         self.targetPopulation = population
         
-    def getInformations(self):
-        return [self.targetPopulation.getEntitiesFitness(),  self.targetPopulation.getEntitiesDictionnaries()]
+        self.data = []
+        
+    def fetchInformationsGeneration(self):
+        self.data.append({"fitness": self.targetPopulation.getEntitiesFitness(),  "entities": self.targetPopulation.getEntitiesDictionnaries()})
+        
+    def getAllInformations(self):
+        return self.data

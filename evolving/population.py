@@ -63,7 +63,7 @@ class Population:
             return self.name
         
     def getEntitiesFitness(self):
-        return [e.getSpecie().entity_fitness(e) for e in self.actualGen]
+        return [e.getSpecie().getEntityFitness(e) for e in self.actualGen]
     
     def getEntitiesDictionnaries(self):
         return [e.getDNA() for e in self.actualGen]
