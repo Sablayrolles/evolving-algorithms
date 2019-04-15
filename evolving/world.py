@@ -51,4 +51,5 @@ class World:
     
     def run(self, nbGenrations=1):
         for g in range(nbGenrations):
+            print("Generation "+str(g)+"\n")
             self.tick()
