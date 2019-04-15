@@ -17,6 +17,9 @@ Created on Sun Apr 14 00:31:19 2019
 """
 import random
 import numpy
+import statistics
+from pprint import pprint
+import matplotlib.pyplot as plt
 
 import evolving
 
@@ -231,3 +234,17 @@ print(w.getStatistiquesDict()[p].getAllInformations())
 """
 
 #main 8)
+w.run(10)
+fitnessGen = {data["gennum"] : data["fitness"] for data in w.getStatistiquesDict()[p].getAllInformations()}
+statFitness = {num : {"min": min(f), "max": max(f), "median": statistics.median(f), "mean": statistics.mean(f)} for num, f in fitnessGen.items()}
+pprint(statFitness)
+
+
+plt.plot(statFitness.keys(), [v["min"] for k,v in statFitness.items()], 'ro--', label="min")
+plt.plot(statFitness.keys(), [v["max"] for k,v in statFitness.items()], 'bs--', label="max")
+plt.plot(statFitness.keys(), [v["median"] for k,v in statFitness.items()], 'g^--', label="median")
+plt.plot(statFitness.keys(), [v["mean"] for k,v in statFitness.items()], 'm+--', label="mean")
+plt.xlabel('Num generation')
+plt.ylabel('fitness')
+plt.legend()
+plt.show()

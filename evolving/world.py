@@ -48,3 +48,7 @@ class World:
             
         for p, s in self.statistiques.items():
             s.fetchInformationsGeneration()
+    
+    def run(self, nbGenrations=1):
+        for g in range(nbGenrations):
+            self.tick()
