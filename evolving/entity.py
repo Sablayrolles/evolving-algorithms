@@ -175,10 +175,16 @@ class Entity:
             self.partener.reproduction_setPartner(None)
             
     
-    def _lifeCycle(self):
+    def _lifeCycle(self, environnement):
+        if str(constantes.getTopLevelParentClassAfterObject(environnement)) != "Environnement" :
+            raise exceptions.NotAnEnvironnement("", "environnement need to be an Environnement")
         self.internclock += 1
         self.reproductionChildNumberOnTick = 0
+        
+        
     
-    def live(self):
+    def live(self, environnement):
+        if str(constantes.getTopLevelParentClassAfterObject(environnement)) != "Environnement" :
+            raise exceptions.NotAnEnvironnement("", "environnement need to be an Environnement")
         while not self.isTimeToDie():
-            self._lifeCycle()
+            self._lifeCycle(environnement)

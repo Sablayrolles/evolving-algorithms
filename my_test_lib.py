@@ -18,6 +18,7 @@ Created on Sun Apr 14 00:31:19 2019
 import random
 import numpy
 import statistics
+import math
 from pprint import pprint
 import matplotlib.pyplot as plt
 
@@ -29,11 +30,28 @@ class NotANumberSpeed(Exception):
         self.message = message
 
 #fitness 1)
-class FitnessBlock(evolving.fitness.Fitness):
+class FitnessBlockOld(evolving.fitness.Fitness):
     def entity_fitness(self, entity):
         super().entity_fitness(entity)
         
         return entity.getPosX()
+    
+    def compare_fitness(self, entity1, entity2):
+        super().compare_fitness(entity1, entity2)
+        
+        if self.entity_fitness(entity1) < self.entity_fitness(entity2):
+            return -1
+        else:
+            if self.entity_fitness(entity1) == self.entity_fitness(entity2):
+                return 0
+            else:
+                return -1
+            
+class FitnessBlock(evolving.fitness.Fitness):
+    def entity_fitness(self, entity):
+        super().entity_fitness(entity)
+        
+        return math.fabs(entity.getPosX())
     
     def compare_fitness(self, entity1, entity2):
         super().compare_fitness(entity1, entity2)
@@ -125,14 +143,11 @@ class BlocEntity(evolving.entity.Entity):
     def isTimeToDie(self):
         return self.internclock > self.maxTime
     
-    def _lifeCycle(self):
-        super()._lifeCycle()
+    def _lifeCycle(self, environnement):
+        super()._lifeCycle(environnement)
         
         self.move()
-        
-    def live(self):
-        while not self.isTimeToDie():
-            self._lifeCycle()
+        self.posX -= environnement.getVitesseVentContraire()
             
 e = BlocEntity(s, 0.2)
 e2 = BlocEntity(s, -0.5)
@@ -153,7 +168,18 @@ e_1 = e.reproduce(keepSameId=True)
 """
 
 #environnement 4)
-env = evolving.environnement.Environnement()
+
+class BlockEnvironnement(evolving.environnement.Environnement):
+    def __init__(self, vitesseVentContraire):
+        self.vitesseVentContraire = vitesseVentContraire
+    
+    def getVitesseVentContraire(self):
+        return self.vitesseVentContraire
+    
+    def tick(self):
+        pass
+
+env = BlockEnvironnement(0)
 
 """
 ---------------------
@@ -164,7 +190,7 @@ env = evolving.environnement.Environnement()
 class BlockPopulation(evolving.population.Population):
     def runGeneration(self, environnement):
         for e in self.actualGen:
-            e.live()
+            e.live(environnement)
             
     def orderGeneration(self):
         order = {}
@@ -172,7 +198,7 @@ class BlockPopulation(evolving.population.Population):
         for e in self.actualGen:
             order[e] = e.fitness()
 
-        neworder = {k:v for k,v in sorted(order.items(), key=lambda x: -x[1])}
+        neworder = {k:v for k,v in sorted(order.items(), key=lambda x: x[1])}
         
         self.order = neworder
     
@@ -199,7 +225,7 @@ class BlockPopulation(evolving.population.Population):
             if random.random() < self.chance_mutation:
                 e.mutate(self.percent_variation_mutation)
     
-p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0.3, percent_variation_mutation=0.2, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
+p = BlockPopulation(size=10, percent_selection=0.5, chance_mutation=0.5, percent_variation_mutation=0.5, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
 #p.createGeneration()
 #p.runGeneration(env)
 #p.orderGeneration()
@@ -234,7 +260,7 @@ print(w.getStatistiquesDict()[p].getAllInformations())
 """
 
 #main 8)
-w.run(10000)
+w.run(1000)
 fitnessGen = {data["gennum"] : data["fitness"] for data in w.getStatistiquesDict()[p].getAllInformations()}
 statFitness = {num : {"min": min(f), "max": max(f), "median": statistics.median(f), "mean": statistics.mean(f)} for num, f in fitnessGen.items()}
 pprint(statFitness)
