@@ -197,12 +197,12 @@ class BlockPopulation(evolving.population.Population):
                 e.mutate(self.percent_variation_mutation)
     
 p = BlockPopulation(size=10, percent_selection=0.7, chance_mutation=0.3, percent_variation_mutation=0.2, species_caracteristiques= [{"class": BlocEntity, "specie": s, "percent": 1}])
-p.createGeneration()
-p.runGeneration(env)
-p.orderGeneration()
-p.selectGeneration()
-p.breedGeneration()
-p.mutateGeneration()
+#p.createGeneration()
+#p.runGeneration(env)
+#p.orderGeneration()
+#p.selectGeneration()
+#p.breedGeneration()
+#p.mutateGeneration()
 
 """
 ---------------------
@@ -213,13 +213,19 @@ class BlockStatistiques(evolving.statistique.Statistique):
     pass
 
 stat = BlockStatistiques(p)
-stat.fetchInformationsGeneration()
+#stat.fetchInformationsGeneration()
 
 """
 ---------------------
 """
 
 #world class 7)
+w = evolving.world.World(env, [p], {p: stat}, "Blockworld")
+"""
+w.tick()
+print(w.getStatistiquesDict()[p].getAllInformations())
+"""
+
 """
 ---------------------
 """

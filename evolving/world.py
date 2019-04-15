@@ -12,20 +12,23 @@ class World:
             if str(constantes.getTopLevelParentClassAfterObject(p)) != "Population" :
                 raise exceptions.NotAPopulation("", "populations_list need to be an Population list")
         
-        if str(type(statistiquesPopulationDict)) != "dict":
+        if str(type(statistiquesPopulationDict)) != "<class 'dict'>":
              raise exceptions.NotADictionnary("","statistiquesPopulationDict need to be a dictionnary Population : Statistique")
              
         for p,s in statistiquesPopulationDict.items():
             if str(constantes.getTopLevelParentClassAfterObject(p)) != "Population":
                  raise exceptions.NotAPopulation("", "population in statistiquesPopulationDict need to be Population")
                  
-            if str(constantes.getTopLevelParentClassAfterObject(p)) != "Statistique":
+            if str(constantes.getTopLevelParentClassAfterObject(s)) != "Statistique":
                  raise exceptions.NotAPopulation("", "statistique in statistiquesPopulationDict need to be Statistique")
                  
         self.name = name
         self.environnement = environnement
         self.populations = populations_list
         self.statistiques = statistiquesPopulationDict
+        
+    def getStatistiquesDict(self):
+        return self.statistiques
     
     def tick(self):
         self.environnement.tick()
@@ -35,7 +38,7 @@ class World:
         
         #in parallela
         for p in self.populations:
-            p.runGeneration()
+            p.runGeneration(self.environnement)
             
         for p in self.populations:
             p.orderGeneration()
@@ -43,5 +46,5 @@ class World:
             p.breedGeneration()
             p.mutateGeneration()
             
-        for s in self.statistiques:
+        for p, s in self.statistiques.items():
             s.fetchInformationsGeneration()
