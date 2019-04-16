@@ -1,8 +1,0 @@
-Folder Structure:
-
-GameTest
-    |-assets
-    |-entities
-        __init__.py
-    |-system
-        __init__.py
