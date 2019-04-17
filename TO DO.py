@@ -48,6 +48,8 @@ Genetic Algorithm :
 #   - dimCouches[i] \mean dimCouches[i] +- dropOut
 #   - activationCouches[i] choice activationCouches[i]
 #   - optimisation choice optimisation
+#
+# on utilise le réseau de neurone tel quel on le considère déja entrainé
 
 # TO DO : Continuous Evoutionary System
 #
