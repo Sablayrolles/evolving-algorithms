@@ -62,7 +62,7 @@ class FitnessBlock(evolving.fitness.Fitness):
             if self.entity_fitness(entity1) == self.entity_fitness(entity2):
                 return 0
             else:
-                return -1
+                return 1
 f = FitnessBlock()
 
 """
@@ -179,7 +179,7 @@ class BlockEnvironnement(evolving.environnement.Environnement):
     def tick(self):
         pass
 
-env = BlockEnvironnement(0)
+env = BlockEnvironnement(10)
 
 """
 ---------------------
@@ -260,7 +260,7 @@ print(w.getStatistiquesDict()[p].getAllInformations())
 """
 
 #main 8)
-w.run(1000)
+w.run(100)
 fitnessGen = {data["gennum"] : data["fitness"] for data in w.getStatistiquesDict()[p].getAllInformations()}
 statFitness = {num : {"min": min(f), "max": max(f), "median": statistics.median(f), "mean": statistics.mean(f)} for num, f in fitnessGen.items()}
 pprint(statFitness)
