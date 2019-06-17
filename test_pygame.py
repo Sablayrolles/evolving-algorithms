@@ -1,35 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
-
-
 import random
-import pygame #conda install -c cogsic pygame + install pygame with sudo apt-get install python-pygame
+import pygame #conda install -c cogsic pygame ou pip install pygame + install pygame with sudo apt-get install python-pygame
 from  pygame.locals import *
 
 pygame.init()
 
 if not pygame.font:
     print("No fonts!")
-
-
-# In[ ]:
-
-
-screen_width = 500
-screen_height = 500
-
-def Screen(screen_width, screen_height, caption = "My PyGame"):
-    win = pygame.display.set_mode((screen_width,screen_height))
-    pygame.display.set_caption(caption)
-    return win
-
-win = Screen(screen_width, screen_height)
-
-
-# In[ ]:
-
 
 class Elipse:
     def __init__(self, fminx, fmaxx, fminy, fmaxy, width, height, velocity=-1, color=(255,0,0), x = 0, y = 0):
@@ -158,33 +137,44 @@ class Tick:
         label = self.myfont.render(s, 1, (0,255,0))
         self.win.blit(label, (0, 0))
 
-# In[ ]:
-
-
-run = True
-ellipses = [Elipse(0, screen_width, 0, screen_height, 10, 15), 
-            Elipse(0, screen_width, 0, screen_height, 10, 15, color=(255,0,255)), 
-            Elipse(0, screen_width, 0, screen_height, 10, 15, color=(0,255,0))]
-
-t = Tick(win)
-while run:
-    pygame.time.delay(500)
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-    
-    keys = pygame.key.get_pressed() #https://www.pygame.org/docs/ref/key.html
-    if keys[pygame.K_q]:
-        run = False
+class Window:
+    def __init__(self, width, height, caption= "My PyGame"):
+        self.win = pygame.display.set_mode((width,height))
+        pygame.display.set_caption(caption)
         
-    for e in ellipses:
-        e.undraw(win)
-        e.randomMove()
-        e.draw(win)
+        self.width = width
+        self.height = height
+        
+    def run(self, function):
+        function(self.win,self.width, self.height)
+        
+def myrun(win, width, height):
+    run = True
+    ellipses = [Elipse(0, width, 0, height, 10, 15), 
+                Elipse(0, width, 0, height, 10, 15, color=(255,0,255)), 
+                Elipse(0, width, 0, height, 10, 15, color=(0,255,0))]
     
-    t.tick()
-    
-    pygame.display.update()
-pygame.quit()
+    t = Tick(win)
+    while run:
+        pygame.time.delay(500)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        
+        keys = pygame.key.get_pressed() #https://www.pygame.org/docs/ref/key.html
+        if keys[pygame.K_q]:
+            run = False
+            
+        for e in ellipses:
+            e.undraw(win)
+            e.randomMove()
+            e.draw(win)
+        
+        t.tick()
+        
+        pygame.display.update()
+    pygame.quit()
 
+myWin = Window(640, 480, "Test bestioles")
+myWin.run(myrun)

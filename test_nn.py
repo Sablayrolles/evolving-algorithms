@@ -10,6 +10,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 
 import numpy
+import random
 
 model = Sequential()
 
@@ -23,8 +24,9 @@ model.summary()
 
 model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
 
-t = numpy.array([[1,2,3]]) #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
-print("data:", t)
-print("action predicted : ")
-a = model.predict_classes(t)
-print(a) #0->3
+for i in range(15):
+    t = numpy.array([[random.randint(-5,5),random.randint(-5,5),random.randint(-5,5)]]) #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
+    print("data:", t)
+    print("action predicted : ")
+    a = model.predict_classes(t)
+    print(a) #0->3
