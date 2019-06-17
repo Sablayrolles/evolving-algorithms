@@ -12,6 +12,27 @@ from keras.layers import Dense
 import numpy
 import random
 
+class NeuralNetwork:
+    #parameters in agent : nbIn = percept, nbOut = nb actions, activation by list ?, type ??=> conv or others --> pb mix entre deux res de neurones
+    def __init__(self, nbIn, nbOut, nbInt=[], activationIn, activationOut, activationInt=[], typeIn, typeOut, typeInt=[]):
+        self.model = Sequential()
+        
+        if typeIn == "Dense":
+            self.model.add(Dense(nbIn, input_dim=nbIn, activation=activationIn))
+            
+        #implement int
+            
+        if typeOut == "Dense":
+            self.model.add(Dense(nbOut, activation=activationOut))
+            
+        self.model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+            
+    def setActions(self, actions):
+        self.actions = actions
+        
+    def predict(self, env=[]):
+        return self.actions[self.model.predict([env])]
+
 model = Sequential()
 
 model.add(Dense(3, input_dim=3, activation="relu")) #input dim : nombre de parametres capteurs en entree
