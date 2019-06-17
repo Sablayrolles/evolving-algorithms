@@ -14,40 +14,50 @@ import random
 
 class NeuralNetwork:
     #parameters in agent : nbIn = percept, nbOut = nb actions, activation by list ?, type ??=> conv or others --> pb mix entre deux res de neurones
-    def __init__(self, nbIn, nbOut, nbInt=[], activationIn, activationOut, activationInt=[], typeIn, typeOut, typeInt=[]):
-        self.model = Sequential()
+    def __init__(self, nbIn, typeIn, activationIn, nbOut, typeOut, activationOut, nbInt=[], activationInt=[], typeInt=[]):
+        model = Sequential()
         
+        
+        #type:
+        """
+        Conv1D(nb, kernel-size=1, activation=)
+        MaxPooling1D(pool-size=) # de combien on veut réduire si 800 au début et 400 a la fin alors =2
+        RNN(nb)
+        GRU(nb, activation=, recurrent-activation=)
+        LSTM(nb, activation=, recurrent-activation=)
+        """
         if typeIn == "Dense":
-            self.model.add(Dense(nbIn, input_dim=nbIn, activation=activationIn))
+            model.add(Dense(int(nbIn), input_dim=nbIn, activation=activationIn))
             
         #implement int
-            
+        for nb, typ, act in zip(nbInt, typeInt, activationInt):
+            if typ == "Dense":
+                model.add(Dense(int(nb), activation=act))
+                
         if typeOut == "Dense":
-            self.model.add(Dense(nbOut, activation=activationOut))
+            model.add(Dense(int(nbOut), activation=activationOut))
+        
+        model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
             
-        self.model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
-            
+        self.model = model
+        
+        #model.summary()
+        
     def setActions(self, actions):
         self.actions = actions
         
-    def predict(self, env=[]):
-        return self.actions[self.model.predict([env])]
+    def predict(self, env=[], ret="name"):
+        n = int(self.model.predict_classes(numpy.array([env])))
+        if ret == "name":
+            return self.actions[n]
+        else:
+            return n
 
-model = Sequential()
-
-model.add(Dense(3, input_dim=3, activation="relu")) #input dim : nombre de parametres capteurs en entree
-model.add(Dense(8, activation="relu"))
-model.add(Dense(15, activation="relu"))
-model.add(Dense(8, activation="relu"))
-model.add(Dense(4, activation="tanh"))
-
-model.summary()
-
-model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
-
+n = NeuralNetwork(3, "Dense", "relu", 4, "Dense", "sigmoid", [8,15,15,8], ["relu", "relu", "relu", "relu"], ["Dense", "Dense", "Dense", "Dense", "Dense"])
+n.setActions(["forward", "turnLeft", "turnRight", "backward"])
 for i in range(15):
-    t = numpy.array([[random.randint(-5,5),random.randint(-5,5),random.randint(-5,5)]]) #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
+    t = [random.randint(0,15),random.randint(0,15),random.randint(0,15)] #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
     print("data:", t)
     print("action predicted : ")
-    a = model.predict_classes(t)
-    print(a) #0->3
+    a = n.predict(t)
+    print(a) #0->3s"""
