@@ -18,13 +18,9 @@ class NeuralNetwork:
         model = Sequential()
         
         
-        #type:
-        """
-        Conv1D(nb, kernel-size=1, activation=)
-        MaxPooling1D(pool_size=) # de combien on veut réduire si 800 au début et 400 a la fin alors =2
-        GRU(nb, activation=, recurrent_activation=)
-        LSTM(nb, activation=, recurrent_activation=)
-        """
+        #type: Dense, Conv1D, MaxPooling1D, GRU, LSTM
+        #activation: softmax, elu, selu, softplus, softsign, relu, tanh, sigmoid, hard_sigmoid, exponential, linear
+       
         if typeIn == "Dense" or typeIn == "Conv1D":
             if typeIn == "Dense":
                 model.add(Dense(int(nbIn), input_dim=nbIn, activation=activationIn))
@@ -77,7 +73,7 @@ class NeuralNetwork:
         else:  
             return False
 
-n = NeuralNetwork(3, "Dense", "relu", 4, "Dense", "sigmoid", [8,15,15,8], ["relu", "relu", "relu", "relu"], ["Dense", "Dense", "Dense", "Dense", "Dense"])
+n = NeuralNetwork(3, "Dense", "relu", 4, "Dense", "exponential", [8,15,15,8], ["relu", "relu", "relu", "relu"], ["Dense", "Dense", "Dense", "Dense", "Dense"])
 n.setActions(["forward", "turnLeft", "turnRight", "backward"])
 for i in range(15):
     t = [random.randint(0,15),random.randint(0,15),random.randint(0,15)] #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
