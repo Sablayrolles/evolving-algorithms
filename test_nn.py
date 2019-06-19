@@ -7,55 +7,42 @@ Created on Fri Apr 26 15:06:49 2019
 """
 
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Conv1D, MaxPooling1D, GRU, LSTM
 
 import numpy
 import random
 
 class NeuralNetwork:
-    #parameters in agent : nbIn = percept, nbOut = nb actions, activation by list ?, type ??=> conv or others --> pb mix entre deux res de neurones
-    def __init__(self, nbIn, typeIn, activationIn, nbOut, typeOut, activationOut, nbInt=[], activationInt=[], typeInt=[]):
+    #parameters in agent : nbIn = percept, nbOut = nb actions, activation by list ?--> pb mix entre deux res de neurones
+    def __init__(self, nbIn, activationIn, nbOut, activationOut, nbInt=[], activationInt=[]):
         model = Sequential()
-        
-        
-        #type: Dense, Conv1D, MaxPooling1D, GRU, LSTM
+
         #activation: softmax, elu, selu, softplus, softsign, relu, tanh, sigmoid, hard_sigmoid, exponential, linear
        
-        if typeIn == "Dense" or typeIn == "Conv1D":
-            if typeIn == "Dense":
-                model.add(Dense(int(nbIn), input_dim=nbIn, activation=activationIn))
-            if typeIn == "Conv1D":
-                model.add(Conv1D(int(nbIn), input_shape=(1, int(nbIn)), kernel_size=1,  activation=activationIn))
+        model.add(Dense(int(nbIn), input_dim=nbIn, activation=activationIn))
 
-            #implement int
-            for nb, typ, act in zip(nbInt, typeInt, activationInt):
-                if typ == "Dense":
-                    model.add(Dense(int(nb), activation=act))
-                if typ == "Conv1D":
-                    model.add(Conv1D(int(nb), kernel_size=1, activation=act))
-                if typ == "MaxPooling1D":
-                    model.add(MaxPooling1D(int(nb), kernel_size=1, activation=act))
-                if typ == "GRU":
-                    model.add(GRU(int(nb), kernel_size=1, activation=act, recurrent_activation=act))
-                if typ == "LSTM":
-                    model.add(LSTM(int(nb), kernel_size=1, activation=act, recurrent_activation=act))
-                    
-            if typeOut == "Dense":
-                model.add(Dense(int(nbOut), activation=activationOut))
-            if typeOut == "Conv1D":
-                model.add(Conv1D(int(nbOut), kernel_size=1, activation=activationOut))
-            if typeOut == "MaxPooling1D":
-                model.add(MaxPooling1D(int(nbOut), kernel_size=1, activation=activationOut))
-            if typeOut == "GRU":
-                model.add(GRU(int(nbOut), kernel_size=1, activation=activationOut))
-            if typeOut == "LSTM":
-                model.add(LSTM(int(nbOut), kernel_size=1, activation=activationOut, recurrent_activation=activationOut))
-            
-            model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
-                
-            self.model = model
+        #implement int
+        for nb, act in zip(nbInt, activationInt):
+            model.add(Dense(int(nb), activation=act))
         
-            #model.summary()
+        model.add(Dense(int(nbOut), activation=activationOut))
+                  
+        model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+            
+        self.model = model
+    
+        model.summary()
+
+    def listActivation():
+        return ["softmax", "elu", "selu", "softplus", "softsign", "relu", "tanh", "sigmoid", "hard_sigmoid", "exponential", "linear"]
+
+    def randomActivation():
+        return random.choice(NeuralNetwork.listActivation())
+
+    def randomNeuralNetwork(MAX_COUCHES, MAX_NN_COUCHES, nbIn, nbOut):
+        nbCoucheInt = random.randint(0, MAX_COUCHES-2)
+        
+        return NeuralNetwork(nbIn, NeuralNetwork.randomActivation(), nbOut, NeuralNetwork.randomActivation(), [random.randint(1, MAX_NN_COUCHES)+1 for _ in range(nbCoucheInt)], [NeuralNetwork.randomActivation() for _ in range(nbCoucheInt)])
 
     def isSet(self):
         return "model" in self.__dict__.keys()
@@ -73,9 +60,9 @@ class NeuralNetwork:
         else:  
             return False
 
-n = NeuralNetwork(3, "Dense", "relu", 4, "Dense", "exponential", [8,15,15,8], ["relu", "relu", "relu", "relu"], ["Dense", "Dense", "Dense", "Dense", "Dense"])
+n = NeuralNetwork.randomNeuralNetwork(15, 10, 3, 4)
 n.setActions(["forward", "turnLeft", "turnRight", "backward"])
-for i in range(15):
+"""for i in range(15):
     t = [random.randint(0,15),random.randint(0,15),random.randint(0,15)] #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
     print("data:", t)
     print("action predicted : ")
