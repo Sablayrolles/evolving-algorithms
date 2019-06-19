@@ -60,9 +60,9 @@ class NeuralNetwork:
         else:  
             return False
 
-n = NeuralNetwork.randomNeuralNetwork(15, 10, 3, 4)
+"""n = NeuralNetwork.randomNeuralNetwork(15, 10, 3, 4)
 n.setActions(["forward", "turnLeft", "turnRight", "backward"])
-"""for i in range(15):
+for i in range(15):
     t = [random.randint(0,15),random.randint(0,15),random.randint(0,15)] #on prédit sur [tab of parameters] :: car on peut vouloir faire plusieurs prédictions ...
     print("data:", t)
     print("action predicted : ")
