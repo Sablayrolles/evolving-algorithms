@@ -4,20 +4,25 @@
 import random
 import pygame #conda install -c cogsic pygame ou pip install pygame + install pygame with sudo apt-get install python-pygame
 from  pygame.locals import *
+import pprint
 
 pygame.init()
 
 if not pygame.font:
     print("No fonts!")
 
+#Coordonées : 0;0 coin haut
+# up vers le haut et droite vers la droite dans une fenetre
+
 class Elipse:
-    def __init__(self, fminx, fmaxx, fminy, fmaxy, width, height, velocity=-1, color=(255,0,0), x = 0, y = 0):
+    def __init__(self, fminx, fmaxx, fminy, fmaxy, width, height, env, velocity=-1, color=(255,0,0), x = 0, y = 0):
         self.minx = fminx
         self.maxx = fmaxx
         self.miny = fminy
         self.maxy = fmaxy-10
         self.w = width
         self.h = height
+        self.env = env
         
         if self.w < self.h:
             self.w_save = self.w
@@ -57,6 +62,10 @@ class Elipse:
             return (self.x + self.w, self.y + (self.h / 2))
     
     def randomMove(self):
+        #print("Pos:",(self.x, self.y),"->",self.env.getCase(self.x, self.y))
+        #print("dir:", ["up", "right", "down", "left"][self.d-1])
+        #print("perception:", self.env.getPerception(self.x, self.y, 3, self.d))
+        
         self.d = random.randint(1,4)
         self.forward()
             
@@ -119,6 +128,70 @@ class Elipse:
     def draw(self, win):
         pygame.draw.ellipse(win, self.getColor(), self.getCoords())
         pygame.draw.line(win, (255,255,255), self.getCenter(), self.getHead())
+
+class EnvWorld:
+    #!! coords inverted -> end dir tout est ok
+    def __init__(self, fminx, fmaxx, fminy, fmaxy):
+        self.map = [[random.randint(1,5) for _ in range(fmaxy - fminy)] for _ in range(fmaxx - fminx)]
+        #remplir que avec des valeurs positives
+
+        self.map[5][5] = "x"
+        self.printMap()
+
+        self.minx = fminx
+        self.miny = fminy
+        self.maxx = fmaxx
+        self.maxy = fmaxy
+
+    def printMap(self):
+        print("[")
+        for l in self.map:
+            print(l)
+        print("]")
+
+    def getFacesCases(self, posx, posy, direction, nbSide):
+        if direction == 1: #up
+            bloc_a_gauche = [(posx-i, posy-1) for i in reversed(range(1, nbSide))]
+            bloc_devant = [(posx, posy-1)]
+            bloc_a_droite = [(posx+i, posy-1) for i in range(1, nbSide)]
+        if direction == 2: #right
+            bloc_a_gauche = [(posx+1, posy-i) for i in reversed(range(1, nbSide))]
+            bloc_devant = [(posx+1, posy)]
+            bloc_a_droite = [(posx+1, posy+i) for i in range(1, nbSide)]
+        if direction == 3: #down
+            bloc_a_gauche = [(posx+i, posy+1) for i in reversed(range(1, nbSide))]
+            bloc_devant = [(posx, posy+1)]
+            bloc_a_droite = [(posx-i, posy+1) for i in range(1, nbSide)] 
+        if direction == 4: #left
+            bloc_a_gauche = [(posx-1, posy+i) for i in reversed(range(1,nbSide))]
+            bloc_devant = [(posx-1, posy)]
+            bloc_a_droite = [(posx-1, posy-i) for i in range(1,nbSide)]
+
+        bloc = bloc_a_gauche
+        bloc.extend(bloc_devant)
+        bloc.extend(bloc_a_droite)
+
+        return bloc
+
+    def isValidCoords(self, posx, posy):
+        return posx >= self.minx and posx <= self.maxx and posy >= self.miny and posy <= self.maxy
+
+    def getPerception(self, posx, posy, rangexyEachSide, direction):
+        #direction 1:up 2:right, 3:down, 4:left
+
+        facesCases = self.getFacesCases(posx, posy, direction, rangexyEachSide)
+
+        percep = []
+        for case in facesCases:
+            if self.isValidCoords(case[1], case[0]):
+                percep.append(self.map[case[1]][case[0]])
+            else:
+                percep.append(-1)
+
+        return percep
+
+    def getCase(self, posx, posy):
+        return self.map[posy][posx]
         
 class Tick:
     def __init__(self, win):
@@ -150,11 +223,13 @@ class Window:
         
 def myrun(win, width, height):
     run = True
-    ellipses = [Elipse(0, width, 0, height, 10, 15), 
-                Elipse(0, width, 0, height, 10, 15, color=(255,0,255)), 
-                Elipse(0, width, 0, height, 10, 15, color=(0,255,0))]
+    env = EnvWorld(0, width, 0, height)
+    ellipses = [Elipse(0, width, 0, height, 1, 1, env), 
+                ]#Elipse(0, width, 0, height, 10, 15, env, color=(255,0,255)), 
+                #Elipse(0, width, 0, height, 10, 15, env, color=(0,255,0))]
     
     t = Tick(win)
+
     while run:
         pygame.time.delay(500)
         
@@ -176,5 +251,5 @@ def myrun(win, width, height):
         pygame.display.update()
     pygame.quit()
 
-myWin = Window(640, 480, "Test bestioles")
+myWin = Window(10, 10, "Test bestioles")
 myWin.run(myrun)
