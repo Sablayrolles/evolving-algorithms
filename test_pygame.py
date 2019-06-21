@@ -41,6 +41,8 @@ class Elipse:
         self.x = x if x > -1 else random.randint(fminx, fmaxx)
         self.y = y if y > -1 else random.randint(fminy, fmaxy)
         self.d = random.randint(1,4)
+
+        self.old_d = self.d
         
     def getColor(self):
         return self.color
@@ -68,6 +70,7 @@ class Elipse:
         print("color: ", self.getColor())
         print("perception:", self.env.getPerception(self.x, self.y, self.w, self.d))
         
+        self.old_d = self.d
         self.d = random.randint(1,4)
         self.forward()
             
